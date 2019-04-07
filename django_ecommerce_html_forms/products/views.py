@@ -80,7 +80,7 @@ def create_product(request):
             description=request.POST.get('description', ''),
             category=category
         )
-        )  # <YOUR CODE HERE>
+          # <YOUR CODE HERE>
 
         # Up to three images URLs can come in payload with keys 'image-1', 'image-2', etc.
         # For each one, create a ProductImage object with proper URL and product
