@@ -61,7 +61,7 @@ def create_product(request):
         # Price validation: positive float lower than 10000.00
         # <YOUR CODE HERE>
         price = request.POST.get('price')
-        if float(price) > 0 and float(price) < 10000.00:
+        if float(price) < 0 and float(price) > 10000.00:
             errors['price'] = "Price needs to be positive float less than 10000.00"
 
         # if any errors so far, render 'create_product.html' sending errors and
