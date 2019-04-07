@@ -57,18 +57,19 @@
     <tbody>
       <!-- Loop through all products and render the component below replacing each part properly -->
       <!-- YOUR FOR LOOP HERE -->
+      {% for product in products %}
       <tr style="text-align: center;">
         <td>{{ forloop.counter }}</td>
         <!-- Complete product name -->
-        <td>TEST PRODUCT</td>
+        <td>{{ product.name }}</td>
         <!-- Complete product category name -->
-        <td>TEST CATEGORY</td>
+        <td>{{ product.category }}</td>
         <!-- Complete product price -->
-        <td>$999.99</td>
+        <td>{{ product.price }}</td>
         <td>
           {% if product.featured %}
           <!-- Complete href property with product id at the end -->
-          <a href="/toggle-featured/99999"><i style="color: orange;" title='Edit' class="fas fa-star"></i></a>
+          <a href="/toggle-featured/{{ product.id }}"><i style="color: orange;" title='Edit' class="fas fa-star"></i></a>
           {% else %}
           <!-- Complete href property with product id at the end -->
           <a href="/toggle-featured/99999"><i title='Edit' class="far fa-star"></i></a>
@@ -76,14 +77,16 @@
         </td>
         <td>
           <!-- Complete href property with product id at the end -->
-          <a href="/edit-product/99999"><i title='Edit' class="fas fa-edit"></i></a>
+          <a href="/edit-product/{{ product.id }}"><i title='Edit' class="fas fa-edit"></i></a>
           <!-- Complete href property with /delete-product/{{product.id}} -->
-          <a href="">
+          <a href="/delete-product/{{ product.id }}">
             <i style="color: crimson;" title='Delete' class="fas fa-trash"></i>
           </a>
         </td>
       </tr>
       <!-- YOUR END FOR LOOP HERE -->
+      {% endfor %}
     </tbody>
   </table>
 {% endblock %}
+

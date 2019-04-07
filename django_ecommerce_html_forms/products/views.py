@@ -6,10 +6,10 @@ from products.models import Product, Category, ProductImage
 
 def products(request):
     # Get all products from the DB using the Product model
-    products = '...'  # <YOUR CODE HERE>
+    products = Product.objects.all()  # <YOUR CODE HERE>
 
     # Get up to 4 `featured=true` Products to be displayed on top
-    featured_products = '...'  # <YOUR CODE HERE>
+    featured_products = products.filter(featured=true)[:4]  # <YOUR CODE HERE>
 
     return render(
         request,
@@ -20,10 +20,10 @@ def products(request):
 
 def create_product(request):
     # Get all categories from the DB
-    categories = '...'  # <YOUR CODE HERE>
+    categories = Category.objects.all()  # <YOUR CODE HERE>
     if request.method == 'GET':
         # Render 'create_product.html' template sending categories as context
-        return render(request, 'static_form.html')  # static_form is just used as an example
+        return render(request, 'create_product.html', {'categories': categories})  # static_form is just used as an example
     elif request.method == 'POST':
         # Validate that all fields below are given in request.POST dictionary,
         # and that they don't have empty values.
