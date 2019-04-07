@@ -41,7 +41,7 @@ def create_product(request):
             
         if errors:
             return render(request, 'create_product.html',{'categories':categories, 'errors':errors})
-        else:
+        
             
 
         # If no errors so far, validate each field one by one and use the same
