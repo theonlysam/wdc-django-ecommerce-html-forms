@@ -72,13 +72,14 @@ def create_product(request):
         # If execution reaches this point, there aren't any errors.
         # Get category from DB based on category name given in payload.
         # Create product with data given in payload and proper category
-        category = Category.objects.get(name=request.POST.get('category'))  # <YOUR CODE HERE>
+        category = Category.objects.get(name=request.POST.get('category'))
         product = Product.objects.create(
-                                        name=request.POST.get('name'),
-                                        sku=request.POST.get('sku'),
-                                        price=float(request.POST.get('price')),
-                                        description=request.POST.get('description', ''),
-                                        category=category
+            name=request.POST.get('name'),
+            sku=request.POST.get('sku'),
+            price=float(request.POST.get('price')),
+            description=request.POST.get('description', ''),
+            category=category
+        )
         )  # <YOUR CODE HERE>
 
         # Up to three images URLs can come in payload with keys 'image-1', 'image-2', etc.
