@@ -72,7 +72,7 @@ def create_product(request):
         # If execution reaches this point, there aren't any errors.
         # Get category from DB based on category name given in payload.
         # Create product with data given in payload and proper category
-        category = Category.objects.get(category=request.POST.get('category'))  # <YOUR CODE HERE>
+        category = Category.objects.get(name=request.POST.get('category'))  # <YOUR CODE HERE>
         product = Product.objects.create(name=request.POST['name'],
                                         sku=request.POST['sku'],
                                         category=category,
