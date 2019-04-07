@@ -9,7 +9,7 @@ def products(request):
     products = Product.objects.all()  # <YOUR CODE HERE>
 
     # Get up to 4 `featured=true` Products to be displayed on top
-    featured_products = products.filter(featured=true)[:4]  # <YOUR CODE HERE>
+    featured_products = products.filter(featured=True)[:4]  # <YOUR CODE HERE>
 
     return render(
         request,
@@ -35,6 +35,14 @@ def create_product(request):
         fields = ['name', 'sku', 'price']
         errors = {}
         # <YOUR CODE HERE>
+        for field in fields:
+            if not request.POST[field]:
+                errors[field] = 'This field is required'
+            
+        if errors:
+            return render(request, 'create_product.html',{'categories':categories, 'errors':errors})
+        else:
+            
 
         # If no errors so far, validate each field one by one and use the same
         # errors dictionary created above in case that any validation fails
@@ -46,23 +54,39 @@ def create_product(request):
 
         # SKU validation: it must contain 8 alphanumeric characters
         # <YOUR CODE HERE>
+        sku = request.POST.get('sku')
+        if len(sku) != 8 and sku.isalnum():
+            errors['sku'] = "SKU must contain 8 alphanumeric characters"
 
         # Price validation: positive float lower than 10000.00
         # <YOUR CODE HERE>
+        price = request.POST.get('price')
+        if float(price) > 0 and float(price) < 10000.00:
+            errors['price'] = "Price needs to be positive float less than 10000.00"
 
         # if any errors so far, render 'create_product.html' sending errors and
         # categories as context
         # <YOUR CODE HERE>
-
+        return render(request, 'create_product.html',{'categories':categories, 'errors':errors})
+        
         # If execution reaches this point, there aren't any errors.
         # Get category from DB based on category name given in payload.
         # Create product with data given in payload and proper category
-        category = '...'  # <YOUR CODE HERE>
-        product = '...'  # <YOUR CODE HERE>
+        category = Category.objects.filter(category=request.POST['category'])  # <YOUR CODE HERE>
+        product = Product.objects.create(name=request.POST['name'],
+                                        sku=request.POST['sku'],
+                                        category=category,
+                                        description=request.POST['description'],
+                                        price=request.POST['price'])  # <YOUR CODE HERE>
 
         # Up to three images URLs can come in payload with keys 'image-1', 'image-2', etc.
         # For each one, create a ProductImage object with proper URL and product
         # <YOUR CODE HERE>
+        images = ['image_1', 'image_2','image_3']
+        for image in images:
+            if request.POST.get(image):
+                ProductImage.objects.create(Product=request.POST[image],
+                                            url=request.POST['placeholder'] )
 
         # Redirect to 'products' view
         return redirect('products')
