@@ -73,11 +73,13 @@ def create_product(request):
         # Get category from DB based on category name given in payload.
         # Create product with data given in payload and proper category
         category = Category.objects.get(name=request.POST.get('category'))  # <YOUR CODE HERE>
-        product = Product.objects.create(name=request.POST['name'],
-                                        sku=request.POST['sku'],
-                                        category=category,
-                                        description=request.POST['description'],
-                                        price=request.POST['price'])  # <YOUR CODE HERE>
+        product = Product.objects.create(
+                                        name=request.POST.get('name'),
+                                        sku=request.POST.get('sku'),
+                                        price=float(request.POST.get('price')),
+                                        description=request.POST.get('description', ''),
+                                        category=category
+        )  # <YOUR CODE HERE>
 
         # Up to three images URLs can come in payload with keys 'image-1', 'image-2', etc.
         # For each one, create a ProductImage object with proper URL and product
