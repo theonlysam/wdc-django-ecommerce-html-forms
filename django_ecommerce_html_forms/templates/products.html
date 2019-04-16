@@ -13,7 +13,7 @@
           {% if featured_product.productimage_set.all %}
           <div class="product-image-container">
             <!-- Replace the src tag with the FIRST url image of the product-->
-            <img class="card-img-top product-image" src="{{ featured_proudct.url }}" alt="Card image cap">
+            <img class="card-img-top product-image" src="{{ featured_proudct.productimage_set.first.url }}" alt="Card image cap">
           </div>
           {% else %}
           <div class="product-image-container">

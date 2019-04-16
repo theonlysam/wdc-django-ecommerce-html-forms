@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseNotFound
+from decimal import Decimal
 
 from products.models import Product, Category, ProductImage
 
@@ -97,33 +98,50 @@ def create_product(request):
 
 def edit_product(request, product_id):
     # Get product with given product_id
-    product = '...'  # <YOUR CODE HERE>
+    product = get_object_or_404(Product,id=product_id)  # <YOUR CODE HERE>
 
     # Get all categories from the DB
-    categories = '...'  # <YOUR CODE HERE>
+    categories = Category.objects.all()  # <YOUR CODE HERE>
     if request.method == 'GET':
         # Render 'edit_product.html' template sending product, categories and
         # a 'images' list containing all product images URLs.
-
+        images = []
+        pictures = ProductImage.objects.all()
+        for picture in pictures:
+            images.append(picture.url)
         # images = ['http://image/1', 'http://image/2', ...]
-        return render(request, 'static_form.html')  # static_form is just used as an example
+        return render(request, 'edit_product.html', {'product': product, 
+                                                    'categories': categories,
+                                                    'images': images
+        })  # static_form is just used as an example
     elif request.method == 'POST':
         # Validate following fields that come in request.POST in the very same
         # way that you've done it in create_product view
         fields = ['name', 'sku', 'price']
         errors = {}
         # <YOUR CODE HERE>
+        for field in fields:
+            if field:
+                errors[field] = 'The {} field is required'.format(field)
+        
+        if errors:
+            return render(request, 'edit_product.html', {'product':product,
+                                                        'errors': errors})
 
         # If execution reaches this point, there aren't any errors.
         # Update product name, sku, price and description from the data that
         # come in request.POST dictionary.
         # Consider that ALL data is given as string, so you might format it
         # properly in some cases.
-        product.name = '...'  # <YOUR CODE HERE>
+        product.name = request.POST['name']  # <YOUR CODE HERE>
+        product.sku = request.POST['sku']
+        product.price = Decimal(request.POST['price'])
+        product.description = request.POST['description']
+        
 
         # Get proper category from the DB based on the category name given in
         # payload. Update product category.
-        category = '...'  # <YOUR CODE HERE>
+        category = Category.objects.get(name=request.POST.get('category'))  # <YOUR CODE HERE>
         product.category = category
         product.save()
 
@@ -135,28 +153,51 @@ def edit_product(request, product_id):
         #    come in payload
         # 3) Keep all ProductImage objects that are created and also came in payload
         # <YOUR CODE HERE>
-
+        new_images = []
+        for i in range(3):
+            image = request.POST.get('image-{}'.format(i+1))
+            if image:
+                new_images.append(image)
+        old_images = [image.url for image in product.productimage_set.all()]
+        
+        images_to_delete = []
+        for image in old_images:
+            if image not in new_images:
+                images_to_delete.append(image)
+        ProductImage.objects.filter(url__in=images_to_delete).delete()
+        
+        for image in new_images:
+            if image not in old_images:
+                ProductImage.objects.create(
+                    proudct=product,
+                    url=image)
+                
+        
+            
         # Redirect to 'products' view
         return redirect('products')
 
 
 def delete_product(request, product_id):
     # Get product with given product_id
-    product = '...'  # <YOUR CODE HERE>
+    product = get_object_or_404(Product, id=product_id)  # <YOUR CODE HERE>
     if request.method == 'GET':
         # render 'delete_product.html' sending product as context
-        return '...'  # <YOUR CODE HERE>
+        return render(request, 'delete_product.html', {'product':product})  # <YOUR CODE HERE>
     elif request.method == "POST":
         # Delete product and redirect to 'products' view
-        return '...'  # <YOUR CODE HERE>
+        product.delete()
+        return redirect('products')  # <YOUR CODE HERE>
 
 
 def toggle_featured(request, product_id):
     # Get product with given product_id
-    product = '...'  # <YOUR CODE HERE>
+    product = get_object_or_404(Product,id=product_id)  # <YOUR CODE HERE>
 
     # Toggle product featured flag
     # <YOUR CODE HERE>
+    product.featured = not(product.featured)
+    product.save()
 
     # Redirect to 'products' view
     return redirect('products')
